@@ -1,10 +1,11 @@
 package com.bakai.podplayer.ui
 
+import android.animation.ValueAnimator
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,6 +24,7 @@ import com.bakai.podplayer.ui.PodcastDetailsFragment.OnPodcastDetailsListener
 import com.bakai.podplayer.viewmodel.PodcastViewModel
 import com.bakai.podplayer.viewmodel.SearchViewModel
 import com.bakai.podplayer.worker.EpisodeUpdateWorker
+import com.facebook.shimmer.Shimmer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -146,10 +148,12 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
         showProgressBar()
         GlobalScope.launch {
             val results = searchViewModel.searchPodcasts(term)
+            showShimmer()
 
             if (results.isNotEmpty()) {
                 withContext(Dispatchers.Main) {
                     hideProgressBar()
+                    stopShimmer()
                     databinding.toolbar.title = term
                     podcastListAdapter.setSearchData(results)
                 }
@@ -208,8 +212,29 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
 
         podcastListAdapter = PodcastListAdapter(null, this, this)
         databinding.podcastRecyclerView.adapter = podcastListAdapter
+
+        initAndStartShimmer()
+        stopShimmer()
     }
 
+    private fun stopShimmer(){
+        Handler().postDelayed({
+            databinding.shimmerViewContainer.stopShimmer()
+            databinding.shimmerViewContainer.hideShimmer()
+        }, 2500)
+    }
+
+    private fun showShimmer() {
+        databinding.shimmerViewContainer.startShimmer()
+        databinding.shimmerViewContainer.showShimmer(true)
+    }
+
+    private fun initAndStartShimmer() {
+        val shimmerBuilder = Shimmer.AlphaHighlightBuilder()
+        databinding.shimmerViewContainer.setShimmer(
+                shimmerBuilder.setDuration(2000L)
+                        .setRepeatMode(ValueAnimator.REVERSE).build())
+    }
 
     private fun showDetailsFragment() {
         val podcastDetailsFragment = createPodcastDetailsFragment()

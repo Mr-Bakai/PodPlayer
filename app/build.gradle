@@ -70,4 +70,10 @@ dependencies {
   //Koin
   implementation "org.koin:koin-core:$koin_version"
   implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+
+//  //Skeleton
+//  implementation 'com.ethanhua:skeleton:1.1.2'
+//  implementation 'io.supercharge:shimmerlayout:2.1.0'
+
+  implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }
