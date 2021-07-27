@@ -120,6 +120,9 @@ class EpisodePlayerFragment : Fragment() {
             mediaPlayer?.release()
             mediaPlayer = null
         }
+
+        val activity = activity as AppCompatActivity
+        activity.supportActionBar?.show()
     }
 
     private fun setupControls() {

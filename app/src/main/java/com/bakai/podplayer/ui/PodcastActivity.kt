@@ -4,9 +4,11 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.viewModelScope
@@ -36,6 +38,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
     private lateinit var podcastListAdapter: PodcastListAdapter
     private lateinit var searchMenuItem: MenuItem
     private lateinit var databinding: ActivityPodcastBinding
+    private var isEnabledToShowSubscribed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,14 +124,43 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
         }
     }
 
+    override fun onBackPressed() {
+        if (isEnabledToShowSubscribed) {
+            showSubscribedPodcasts()
+            isEnabledToShowSubscribed = false
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun addBackStackListener() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                databinding.podcastRecyclerView.visibility = View.VISIBLE
+                isEnabledToShowSubscribed = true
+            }
+        }
+    }
+
     private fun performSearch(term: String) {
         showProgressBar()
         GlobalScope.launch {
             val results = searchViewModel.searchPodcasts(term)
-            withContext(Dispatchers.Main) {
-                hideProgressBar()
-                databinding.toolbar.title = term
-                podcastListAdapter.setSearchData(results)
+
+            if (results.isNotEmpty()) {
+                withContext(Dispatchers.Main) {
+                    hideProgressBar()
+                    databinding.toolbar.title = term
+                    podcastListAdapter.setSearchData(results)
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    hideProgressBar()
+                    Toast.makeText(
+                            this@PodcastActivity,
+                            "Result were not found by $term",
+                            Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -163,21 +195,14 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
         })
     }
 
-    private fun addBackStackListener() {
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                databinding.podcastRecyclerView.visibility = View.VISIBLE
-            }
-        }
-    }
-
     private fun updateControls() {
         databinding.podcastRecyclerView.setHasFixedSize(true)
 
         val layoutManager = LinearLayoutManager(this)
         databinding.podcastRecyclerView.layoutManager = layoutManager
 
-        val dividerItemDecoration = DividerItemDecoration(databinding.podcastRecyclerView.context,
+        val dividerItemDecoration = DividerItemDecoration(
+                databinding.podcastRecyclerView.context,
                 layoutManager.orientation)
         databinding.podcastRecyclerView.addItemDecoration(dividerItemDecoration)
 
@@ -189,8 +214,11 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
     private fun showDetailsFragment() {
         val podcastDetailsFragment = createPodcastDetailsFragment()
 
-        supportFragmentManager.beginTransaction().add(R.id.podcastDetailsContainer,
-                podcastDetailsFragment, TAG_DETAILS_FRAGMENT).addToBackStack("DetailsFragment").commit()
+        val f = supportFragmentManager.beginTransaction()
+        f.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+        f.add(R.id.podcastDetailsContainer, podcastDetailsFragment, TAG_DETAILS_FRAGMENT)
+        f.addToBackStack("PlayerFragment").commit()
+
         databinding.podcastRecyclerView.visibility = View.INVISIBLE
         searchMenuItem.isVisible = false
     }
@@ -198,15 +226,16 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapterListener, OnPodca
     private fun showPlayerFragment() {
         val episodePlayerFragment = createEpisodePlayerFragment()
 
-        supportFragmentManager.beginTransaction().replace(
-                R.id.podcastDetailsContainer,
-                episodePlayerFragment, TAG_PLAYER_FRAGMENT).addToBackStack("PlayerFragment").commit()
+        val f = supportFragmentManager.beginTransaction()
+        f.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+        f.replace(R.id.podcastDetailsContainer, episodePlayerFragment, TAG_PLAYER_FRAGMENT)
+        f.addToBackStack("PlayerFragment").commit()
+
         databinding.podcastRecyclerView.visibility = View.INVISIBLE
         searchMenuItem.isVisible = false
     }
 
     private fun createEpisodePlayerFragment(): EpisodePlayerFragment {
-
         var episodePlayerFragment = supportFragmentManager.findFragmentByTag(TAG_PLAYER_FRAGMENT) as
                 EpisodePlayerFragment?
 

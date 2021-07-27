@@ -1,10 +1,15 @@
 package com.bakai.podplayer.ui
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.*
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
+import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +35,7 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -41,6 +47,7 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        handleOnBackPressed()
 
         podcastViewModel.podcastLiveData.observe(viewLifecycleOwner, { viewData ->
             if (viewData != null) {
@@ -66,6 +73,15 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
 
                 activity?.invalidateOptionsMenu()
             }
+        })
+    }
+
+    private fun handleOnBackPressed() {
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                requireActivity().supportFragmentManager.popBackStack("PlayerFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
+
         })
     }
 
@@ -99,6 +115,7 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
         }
     }
 
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         podcastViewModel.podcastLiveData.observe(viewLifecycleOwner, { podcast ->
             if (podcast != null) {
@@ -112,6 +129,7 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
     override fun onSelectedEpisode(episodeViewData: PodcastViewModel.EpisodeViewData) {
         listener?.onShowEpisodePlayer(episodeViewData)
     }
+
 
     interface OnPodcastDetailsListener {
         fun onSubscribe()
