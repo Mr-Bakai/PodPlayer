@@ -16,6 +16,7 @@
       android:theme="@style/Theme.PodPlay"
     android:usesCleartextTraffic="true"
     >
+
     <activity android:name="com.bakai.podplayer.ui.PodcastActivity"
         android:launchMode="singleTop"
         android:theme="@style/Theme.PodPlay.NoActionBar">

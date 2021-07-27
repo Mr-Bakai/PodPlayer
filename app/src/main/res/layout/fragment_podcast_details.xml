@@ -8,7 +8,7 @@
       android:id="@+id/headerView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="#eeeeee"
+      android:background="@color/grey_background"
       android:maxHeight="300dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +31,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:maxHeight="100dp"
+        android:textColor="@color/text_greyish"
+
         android:text=""
         android:textSize="14sp"
         android:textStyle="bold"
@@ -50,6 +52,7 @@
         android:paddingBottom="8dp"
         android:scrollbars="vertical"
         android:text=""
+        android:textColor="@color/text_greyish"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feedImageView"/>
