@@ -56,4 +56,13 @@ Install my-project from
 | :-------- | :------- | :------------------------- |
 | `term`    | `string` | **Performs search by term**|
 
+
+## Currently running OS
+
+| OS        | Status               |
+| :-------- | :-------             |
+| `Android` | `Compatible`         |
+| `iOS`     | `Not yet compatible` |
+
+
   
