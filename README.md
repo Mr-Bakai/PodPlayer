@@ -30,4 +30,30 @@ Install my-project from
 - Playback controls outside of the app
 - Podcast search 
     
+
+
+## API Reference
+
+#### API used for podcast search:
+
+- Base URL 
+```http
+  https://itunes.apple.com
+```
+- End point
+```http
+  /search?media=podcast
+```
+
+
+#### Get all item
+
+```http
+  GET/term
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `term`    | `string` | **Performs search by term**|
+
   
