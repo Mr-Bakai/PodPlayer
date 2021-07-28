@@ -75,3 +75,16 @@ Install my-project from
 - Kotlin Extensions and Coroutines support for Room https://developer.android.com/kotlin/coroutines
 - Koin DI  https://insert-koin.io
 - Shimmer http://facebook.github.io/shimmer-android/
+
+
+
+## Architecture 
+
+- MVVM
+- Repository pattern 
+- Separation of concerns
+- Drive UI from a model
+- Base Fragment
+- Base ViewModel
+- The principle of providing the view with just enough information for presentation
+
