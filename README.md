@@ -67,3 +67,11 @@ Install my-project from
 
 
   
+  ## Used Libraries 
+
+- Room https://developer.android.com/training/data-storage/room
+- Retrofit https://square.github.io/retrofit/
+- Glide https://github.com/bumptech/glide
+- Kotlin Extensions and Coroutines support for Room https://developer.android.com/kotlin/coroutines
+- Koin DI  https://insert-koin.io
+- Shimmer http://facebook.github.io/shimmer-android/
